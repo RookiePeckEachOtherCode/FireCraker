@@ -14,7 +14,6 @@ services:
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
     volumes:
       - kafka-data:/bitnami/kafka
-    restart: always
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -26,31 +25,28 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
     depends_on:
       - kafka
-    restart: always
 
   postgres:
     image: postgres:latest
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydatabase
+      POSTGRES_USER: fc_user
+      POSTGRES_PASSWORD: fc_password
+      POSTGRES_DB: fc
     ports:
       - '5432:5432'
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    restart: always
 
   minio:
     image: minio/minio:latest
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: fc_user
+      MINIO_ROOT_PASSWORD: fc_password
     ports:
       - '9000:9000'
     command: server /data
     volumes:
       - minio-data:/data
-    restart: always
 
   redis:
     image: redis:latest
@@ -58,7 +54,22 @@ services:
       - '6379:6379'
     volumes:
       - redis-data:/data
-    restart: always
+
+  nacos:
+    image: nacos/nacos-server:latest
+    environment:
+      - PREFER_HOST_MODE=hostname
+      - MODE=standalone
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    volumes:
+      - ./init.d/custom.properties:/home/nacos/init.d/custom.properties
+
+  sentinel:
+    image: beriholic/sentinel-dashboard:1.8.8
+    ports:
+      - '8858:8080'
 
 volumes:
   kafka-data:

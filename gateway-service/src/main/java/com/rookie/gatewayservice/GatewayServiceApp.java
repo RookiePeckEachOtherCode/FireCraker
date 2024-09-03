@@ -1,11 +1,11 @@
-package com.rookie;
+package com.rookie.gatewayservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class GateWayApp {
+public class GatewayServiceApp {
     public static void main(String[] args) {
-        SpringApplication.run(GateWayApp.class,args);
+        SpringApplication.run(GatewayServiceApp.class, args);
     }
 }
