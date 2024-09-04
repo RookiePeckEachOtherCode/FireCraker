@@ -7,10 +7,9 @@
         <groupId>com.rookie</groupId>
         <artifactId>FireCracker</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>video-service</artifactId>
+    <artifactId>socialize-service</artifactId>
 
     <properties>
         <maven.compiler.source>22</maven.compiler.source>

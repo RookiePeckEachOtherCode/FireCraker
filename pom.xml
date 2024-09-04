@@ -11,6 +11,8 @@
     <modules>
         <module>user-service</module>
         <module>video-service</module>
+        <module>common</module>
+        <module>socialize-service</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -79,6 +81,27 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>annotationProcessor</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mybatis-flex</groupId>
+            <artifactId>mybatis-flex-spring-boot3-starter</artifactId>
+            <version>1.9.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mybatis-flex</groupId>
+            <artifactId>mybatis-flex-processor</artifactId>
+            <version>1.9.7</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
         </dependency>
     </dependencies>
     <dependencyManagement>

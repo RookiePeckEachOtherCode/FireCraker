@@ -9,7 +9,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
   application:
-    name: user-service
+    name: socialize-service
   cloud:
     nacos:
       discovery:

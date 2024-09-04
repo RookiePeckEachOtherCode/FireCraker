@@ -15,5 +15,11 @@ spring:
       discovery:
         server-addr: localhost:8848
         ephemeral: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/fc
+    username: fc_user
+    password: fc_password
+
 server:
   port: 0
