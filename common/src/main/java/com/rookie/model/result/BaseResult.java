@@ -14,6 +14,22 @@ public class BaseResult<T> implements Serializable {
     private String msg;
     private T data;
 
+    public static <T> BaseResult<T> success() {
+        return new BaseResult<>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMsg(), null);
+    }
+
+    public static <T> BaseResult<T> success(T data) {
+        return new BaseResult<>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMsg(), data);
+    }
+
+    public static <T> BaseResult<T> fail() {
+        return new BaseResult<>(ResultCode.FAIL.getCode(), ResultCode.FAIL.getMsg(), null);
+    }
+
+    public static <T> BaseResult<T> fail(T data) {
+        return new BaseResult<>(ResultCode.FAIL.getCode(), ResultCode.FAIL.getMsg(), data);
+    }
+
     public static <T> BaseResult<T> of(ResultCode resultCode, T data) {
         return new BaseResult<>(resultCode.getCode(), resultCode.getMsg(), data);
     }
