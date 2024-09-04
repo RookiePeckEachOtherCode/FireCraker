@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "jwt.expire",
+      "type": "java.lang.String",
+      "description": "Description for jwt.expire."
+    }
+  ]
+}

@@ -21,5 +21,9 @@ spring:
     username: fc_user
     password: fc_password
 
+jwt:
+  secret: "fc_secret"
+  expire: 2592000 # 30 days
+
 server:
   port: 0
