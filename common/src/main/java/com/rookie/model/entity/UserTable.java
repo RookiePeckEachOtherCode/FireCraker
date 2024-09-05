@@ -23,4 +23,5 @@ public class UserTable {
     private String avatar;
     private Long createTime;
     private Long updateTime;
+    private String email;
 }
