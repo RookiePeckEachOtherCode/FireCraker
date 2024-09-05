@@ -20,10 +20,26 @@ spring:
     url: jdbc:postgresql://localhost:5432/fc
     username: fc_user
     password: fc_password
-
+  data:
+    redis:
+      host: localhost
+      port: 6397
+      database: 0
+      jedis:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 0
+          max-wait: 60000
 jwt:
   secret: "fc_secret"
   expire: 2592000 # 30 days
 
 server:
   port: 0
+minio:
+  endpoint: http://localhost:9000
+  accessKey: fc_user
+  secretKey: fc_password
+  imgHost: http://localhost:9000
+

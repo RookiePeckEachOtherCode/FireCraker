@@ -1,78 +1,110 @@
-CREATE TABLE tb_user
+create table tb_user
 (
-    id          BIGINT PRIMARY KEY,
-    name        TEXT   NOT NULL,
-    password    TEXT   NOT NULL,
-    phone       TEXT   NOT NULL,
-    signature   TEXT   NOT NULL DEFAULT '',
-    avatar      TEXT   NOT NULL DEFAULT '',
-    create_time BIGINT NOT NULL,
-    update_time BIGINT NOT NULL
+    id          bigint                not null
+        primary key,
+    name        text                  not null,
+    password    text                  not null,
+    phone       text                  not null,
+    signature   text default ''::text not null,
+    avatar      text default ''::text not null,
+    create_time bigint                not null,
+    update_time bigint                not null,
+    email       text
 );
 
-CREATE TABLE tb_video
+alter table tb_user
+    owner to fc_user;
+
+create table tb_video
 (
-    id          BIGINT PRIMARY KEY,
-    uid         BIGINT NOT NULL,
-    title       TEXT   NOT NULL,
-    description TEXT   NOT NULL DEFAULT '',
-    video_url   TEXT   NOT NULL,
-    cover_url   TEXT   NOT NULL,
-    create_time BIGINT NOT NULL,
-    update_time BIGINT NOT NULL,
-    FOREIGN KEY (uid) REFERENCES tb_user (id)
+    id          bigint                not null
+        primary key,
+    uid         bigint                not null
+        references tb_user,
+    title       text                  not null,
+    description text default ''::text not null,
+    video_url   text                  not null,
+    cover_url   text                  not null,
+    create_time bigint                not null,
+    update_time bigint                not null,
+    play_cnt    integer,
+    fav_cnt     integer,
+    col_cnt     integer
 );
 
-CREATE TABLE tb_video_comment
+alter table tb_video
+    owner to fc_user;
+
+create table tb_video_comment
 (
-    id          BIGINT PRIMARY KEY,
-    uid         BIGINT NOT NULL,
-    vid         BIGINT NOT NULL,
-    fav_cnt     INT    NOT NULL DEFAULT 0,
-    content     TEXT   NOT NULL,
-    create_time BIGINT NOT NULL,
-    update_time BIGINT NOT NULL,
-    FOREIGN KEY (uid) REFERENCES tb_user (id),
-    FOREIGN KEY (vid) REFERENCES tb_video (id)
+    id          bigint            not null
+        primary key,
+    uid         bigint            not null
+        references tb_user,
+    vid         bigint            not null
+        references tb_video,
+    fav_cnt     integer default 0 not null,
+    content     text              not null,
+    create_time bigint            not null,
+    update_time bigint            not null
 );
 
-CREATE TABLE tb_user_video_favorite
+alter table tb_video_comment
+    owner to fc_user;
+
+create table tb_user_video_favorite
 (
-    id          BIGINT PRIMARY KEY,
-    uid         BIGINT NOT NULL,
-    vid         BIGINT NOT NULL,
-    create_time BIGINT NOT NULL,
-    FOREIGN KEY (uid) REFERENCES tb_user (id),
-    FOREIGN KEY (vid) REFERENCES tb_video (id)
+    id          bigint not null
+        primary key,
+    uid         bigint not null
+        references tb_user,
+    vid         bigint not null
+        references tb_video,
+    create_time bigint not null
 );
 
-CREATE TABLE tb_user_video_collection
+alter table tb_user_video_favorite
+    owner to fc_user;
+
+create table tb_user_video_collection
 (
-    id          BIGINT PRIMARY KEY,
-    uid         BIGINT NOT NULL,
-    vid         BIGINT NOT NULL,
-    create_time BIGINT NOT NULL,
-    FOREIGN KEY (uid) REFERENCES tb_user (id),
-    FOREIGN KEY (vid) REFERENCES tb_video (id)
+    id          bigint not null
+        primary key,
+    uid         bigint not null
+        references tb_user,
+    vid         bigint not null
+        references tb_video,
+    create_time bigint not null
 );
 
-CREATE TABLE tb_user_favorite
+alter table tb_user_video_collection
+    owner to fc_user;
+
+create table tb_user_favorite
 (
-    id          BIGINT PRIMARY KEY,
-    uid         BIGINT NOT NULL,
-    fav_uid     BIGINT NOT NULL,
-    create_time BIGINT NOT NULL,
-    FOREIGN KEY (uid) REFERENCES tb_user (id),
-    FOREIGN KEY (fav_uid) REFERENCES tb_user (id)
+    id          bigint not null
+        primary key,
+    uid         bigint not null
+        references tb_user,
+    fav_uid     bigint not null
+        references tb_user,
+    create_time bigint not null
 );
 
+alter table tb_user_favorite
+    owner to fc_user;
 
-CREATE TABLE tb_user_video_history
+create table tb_user_video_history
 (
-    id          BIGINT PRIMARY KEY,
-    uid         BIGINT NOT NULL,
-    vid         BIGINT NOT NULL,
-    create_time BIGINT NOT NULL,
-    FOREIGN KEY (uid) REFERENCES tb_user (id),
-    FOREIGN KEY (vid) REFERENCES tb_video (id)
+    id          bigint not null
+        primary key,
+    uid         bigint not null
+        references tb_user,
+    vid         bigint not null
+        references tb_video,
+    create_time bigint not null
 );
+
+alter table tb_user_video_history
+    owner to fc_user;
+

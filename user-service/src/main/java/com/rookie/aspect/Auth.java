@@ -38,7 +38,6 @@ public class Auth {
             throw new RuntimeException(ResultCode.PERMISSION_TOKEN_INVALID.getMsg());
         }
     }
-
     @After("@annotation(authRequired) && args(..,request)")
     public void afterMethodWithAuthRequired(AuthRequired authRequired, HttpServletRequest request) {
         tokenThreadLocal.remove();

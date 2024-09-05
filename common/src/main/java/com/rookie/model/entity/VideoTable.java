@@ -22,4 +22,7 @@ public class VideoTable {
     private String coverUrl;
     private Long createTime;
     private Long updateTime;
+    private Integer fav_cnt;
+    private Integer play_cnt;
+    private Integer col_cnt;
 }
