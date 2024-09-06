@@ -8,7 +8,6 @@ import com.rookie.model.dto.UserInfoDTO;
 import com.rookie.model.dto.UserLoginDTO;
 import com.rookie.model.dto.UserSelfInfoDTO;
 import com.rookie.model.entity.UserTable;
-import com.rookie.model.entity.VideoTable;
 import com.rookie.model.result.BaseResult;
 import com.rookie.model.result.None;
 import com.rookie.service.UserService;
@@ -109,9 +108,6 @@ public class UserController {
                 .colCnt(114514) //TODO get col count
                 .updCnt(114514) //TODO get upd count
                 .showCollection(dbUser.isShowCollection())
-                .collections(new VideoTable[0]) //TODO get collections
-                .favorites(new VideoTable[0]) //TODO get favorites
-                .uploads(new VideoTable[0]) //TODO get uploads
                 .build();
         return BaseResult.success(userSelfInfo);
     }
@@ -130,9 +126,7 @@ public class UserController {
                 .avatar(dbUser.getAvatar())
                 .signature(dbUser.getSignature())
                 .updCnt(114514) //TODO get upd count
-                .colCnt(114514) //TODO get col count
-                .collections(dbUser.isShowCollection() ? new VideoTable[0] : null) //TODO get collections
-                .uploads(new VideoTable[0]) //TODO get uploads
+                .colCnt(dbUser.isShowCollection() ? 114514 : -1) //TODO get col count
                 .build();
 
         return BaseResult.success(userInfo);

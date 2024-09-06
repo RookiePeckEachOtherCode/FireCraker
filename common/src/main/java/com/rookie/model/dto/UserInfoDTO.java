@@ -1,6 +1,5 @@
 package com.rookie.model.dto;
 
-import com.rookie.model.entity.VideoTable;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,6 +12,4 @@ public class UserInfoDTO {
     private String signature;
     private int updCnt;
     private int colCnt;
-    private VideoTable[] collections;
-    private VideoTable[] uploads;
 }
