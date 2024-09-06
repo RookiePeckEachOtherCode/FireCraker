@@ -1,15 +1,16 @@
 create table tb_user
 (
-    id          bigint                not null
+    id              bigint                   not null
         primary key,
-    name        text                  not null,
-    password    text                  not null,
-    phone       text                  not null,
-    signature   text default ''::text not null,
-    avatar      text default ''::text not null,
-    create_time bigint                not null,
-    update_time bigint                not null,
-    email       text
+    name            text                     not null,
+    password        text                     not null,
+    phone           text unique              not null,
+    signature       text    default ''::text not null,
+    avatar          text    default ''::text not null,
+    create_time     bigint                   not null,
+    update_time     bigint                   not null,
+    email           text unique              not null,
+    show_collection boolean default true     not null
 );
 
 alter table tb_user

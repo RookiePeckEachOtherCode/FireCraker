@@ -30,6 +30,10 @@ public class BaseResult<T> implements Serializable {
         return new BaseResult<>(ResultCode.FAIL.getCode(), ResultCode.FAIL.getMsg(), data);
     }
 
+    public static <T> BaseResult<T> fail(String msg) {
+        return new BaseResult<>(ResultCode.FAIL.getCode(), msg, null);
+    }
+
     public static <T> BaseResult<T> of(ResultCode resultCode, T data) {
         return new BaseResult<>(resultCode.getCode(), resultCode.getMsg(), data);
     }
@@ -37,6 +41,7 @@ public class BaseResult<T> implements Serializable {
     public static <T> BaseResult<T> of(ResultCode resultCode) {
         return new BaseResult<>(resultCode.getCode(), resultCode.getMsg(), null);
     }
+
 }
 
 
