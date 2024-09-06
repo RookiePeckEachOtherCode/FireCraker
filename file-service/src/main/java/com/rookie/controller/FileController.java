@@ -1,6 +1,7 @@
 package com.rookie.controller;
 
 import com.rookie.annotation.AuthRequired;
+import com.rookie.config.MinioConfigProp;
 import com.rookie.model.FileBuckets;
 import com.rookie.model.dto.FileUploadDTO;
 import com.rookie.model.result.BaseResult;
@@ -26,6 +27,8 @@ import java.security.NoSuchAlgorithmException;
 public class FileController {
     @Resource
     private MinioClient minioClient;
+    @Resource
+    private MinioConfigProp minioConfigProp;
 
     @PostMapping("/upload/video")
     @AuthRequired
@@ -43,7 +46,7 @@ public class FileController {
                         .build()
         );
         return BaseResult.success(FileUploadDTO.fromUrl(
-                FileBuckets.VIDEO_BUCKET.getBucketName() + "/" + filename
+                minioConfigProp.getImgHost() + "/" + FileBuckets.VIDEO_BUCKET.getBucketName() + "/" + filename
         ));
     }
 
