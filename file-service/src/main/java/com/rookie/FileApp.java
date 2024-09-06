@@ -1,13 +1,13 @@
 package com.rookie;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-@MapperScan("com.rookie.mapper")
-public class VideoApp {
+@EnableFeignClients
+public class FileApp {
     public static void main(String[] args) {
-        SpringApplication.run(VideoApp.class, args);
+        SpringApplication.run(FileApp.class, args);
     }
 }

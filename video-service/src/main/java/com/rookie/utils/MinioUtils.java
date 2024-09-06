@@ -1,6 +1,5 @@
 package com.rookie.utils;
 
-import com.rookie.config.MinioConfigProp;
 import com.rookie.consts.MinioBuckets;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
@@ -23,22 +22,24 @@ public class MinioUtils {
     private MinioClient minioClient;
     @Resource
     private MinioConfigProp minioConfigProp;
-    
-    public String UploadUserAvatar(MultipartFile file,String uid)throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        return UploadImg(file, MinioBuckets.BUCKET_USER_AVATAR,uid);
-    }
-    public String UploadVideoCover(MultipartFile file,String vid)throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        return UploadImg(file,MinioBuckets.BUCKET_VIDEO_COVER,vid);
+
+    public String UploadUserAvatar(MultipartFile file, String uid) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+        return UploadImg(file, MinioBuckets.BUCKET_USER_AVATAR, uid);
     }
 
-    public String UploadVideo(MultipartFile file,String vid)throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        return UploadVideo(file,MinioBuckets.BUCKET_VIDEO,vid);
-    }
-    public Void DeleteVideo(String url)throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        return DeleteObject(url,MinioBuckets.BUCKET_VIDEO);
+    public String UploadVideoCover(MultipartFile file, String vid) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+        return UploadImg(file, MinioBuckets.BUCKET_VIDEO_COVER, vid);
     }
 
-    private String UploadImg(MultipartFile file,String bucket,String id) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException  {
+    public String UploadVideo(MultipartFile file, String vid) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+        return UploadVideo(file, MinioBuckets.BUCKET_VIDEO, vid);
+    }
+
+    public Void DeleteVideo(String url) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+        return DeleteObject(url, MinioBuckets.BUCKET_VIDEO);
+    }
+
+    private String UploadImg(MultipartFile file, String bucket, String id) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         String fileName = file.getOriginalFilename();
         assert fileName != null;
         String fileCode = id + fileName.substring(fileName.lastIndexOf('.'));
@@ -46,25 +47,26 @@ public class MinioUtils {
         PutObjectArgs objectArgs = PutObjectArgs.builder().bucket(bucket).object(fileCode)
                 .stream(file.getInputStream(), file.getSize(), -1).contentType("image/png").contentType("image/jpeg").build();
         minioClient.putObject(objectArgs);
-        
+
         return minioConfigProp.getImgHost() + "/" + bucket + "/" + fileCode;
-        
+
     }
-    private String UploadVideo(MultipartFile file, String bucket,String id)throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException{
+
+    private String UploadVideo(MultipartFile file, String bucket, String id) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         String fileName = file.getOriginalFilename();
         assert fileName != null;
-        String fileCode = id+ fileName.substring(fileName.lastIndexOf('.'));
-        PutObjectArgs objectArgs=PutObjectArgs.builder().bucket(bucket).object(fileCode)
+        String fileCode = id + fileName.substring(fileName.lastIndexOf('.'));
+        PutObjectArgs objectArgs = PutObjectArgs.builder().bucket(bucket).object(fileCode)
                 .stream(file.getInputStream(), file.getSize(), -1).contentType("video/mp4").contentType("video/mp4").build();
         minioClient.putObject(objectArgs);
         return minioConfigProp.getImgHost() + "/" + bucket + "/" + fileCode;
     }
 
     private Void DeleteObject(String url, String bucket) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        String filecode=MinioBuckets.GetFileCodeByUrl(url);
+        String filecode = MinioBuckets.GetFileCodeByUrl(url);
         var args = RemoveObjectArgs.builder().bucket(bucket).object(filecode).build();
         minioClient.removeObject(args);
         return null;
     }
-    
+
 }

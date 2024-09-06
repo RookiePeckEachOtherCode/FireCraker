@@ -1,0 +1,51 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:9094
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+  application:
+    name: file-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        ephemeral: true
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/fc
+    username: fc_user
+    password: fc_password
+
+  data:
+    redis:
+      host: localhost
+      port: 6397
+      database: 0
+      jedis:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 0
+          max-wait: 60000
+jwt:
+  secret: "fc_secret"
+  expire: 2592000 # 30 days
+
+server:
+  port: 11459
+minio:
+  endpoint: http://localhost:9000
+  accessKey: fc_user
+  secretKey: fc_password
+  imgHost: http://localhost:9000
+

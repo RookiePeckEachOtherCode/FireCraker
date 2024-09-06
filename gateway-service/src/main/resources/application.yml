@@ -14,5 +14,9 @@ spring:
           uri: lb://user-service
           predicates:
             - Path=/user/**
+        - id: file_service-router
+          uri: lb://file-service
+          predicates:
+            - Path=/file/**
 server:
   port: 8080
