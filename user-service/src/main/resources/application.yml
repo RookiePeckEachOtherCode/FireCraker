@@ -42,9 +42,3 @@ jwt:
 
 server:
   port: 0
-minio:
-  endpoint: http://localhost:9000
-  accessKey: fc_user
-  secretKey: fc_password
-  imgHost: http://localhost:9000
-
