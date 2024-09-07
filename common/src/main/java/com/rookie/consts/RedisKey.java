@@ -16,4 +16,8 @@ public class RedisKey {
     public static String videoPlayCountKey(Long videoId) {
         return "video:play:count:" + videoId;
     }
+
+    public static String videoCommentSupportKey(Long cid) {
+        return "comment-support-" + cid;
+    }
 }
