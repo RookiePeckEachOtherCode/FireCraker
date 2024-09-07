@@ -11,10 +11,7 @@ import io.minio.errors.*;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.val;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -42,7 +39,7 @@ public class FileController {
                 PutObjectArgs.builder()
                         .bucket(bucket.getBucketName())
                         .object(filename)
-                        .stream(inputStream, -1, 10485760)// 10MB
+                        .stream(inputStream, videoFile.getSize(), -1)
                         .build()
         );
         return BaseResult.success(FileUploadDTO.fromUrl(
@@ -52,9 +49,13 @@ public class FileController {
 
     @PostMapping("/upload/image")
     @AuthRequired
-    public BaseResult<FileUploadDTO> uploadImage(@RequestParam("image") MultipartFile imageFile, HttpServletRequest req) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        val filename = req.getParameter("filename");
-        var bucket = FileBuckets.fromBucketName(req.getParameter("type"));
+    public BaseResult<FileUploadDTO> uploadImage(
+            @RequestPart("image") MultipartFile imageFile,
+            @RequestParam("filename") String filename,
+            @RequestParam("type") String type,
+            @RequestParam("token") String token
+    ) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+        var bucket = FileBuckets.fromBucketName(type);
         if (bucket == null) {
             return BaseResult.fail("Invalid bucket type");
         }
@@ -65,12 +66,12 @@ public class FileController {
                 PutObjectArgs.builder()
                         .bucket(bucket.getBucketName())
                         .object(filename)
-                        .stream(inputStream, -1, 5242880) //5mb
+                        .stream(inputStream, imageFile.getSize(), -1)
                         .build()
         );
 
         return BaseResult.success(FileUploadDTO.fromUrl(
-                FileBuckets.VIDEO_BUCKET.getBucketName() + "/" + filename
+                minioConfigProp.getImgHost() + "/" + bucket.getBucketName() + "/" + filename
         ));
     }
 }

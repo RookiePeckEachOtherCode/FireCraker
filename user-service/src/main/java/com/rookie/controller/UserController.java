@@ -3,21 +3,31 @@ package com.rookie.controller;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.rookie.annotation.AuthRequired;
 import com.rookie.aspect.Auth;
+import com.rookie.model.FileBuckets;
 import com.rookie.model.Token;
-import com.rookie.model.dto.UserInfoDTO;
-import com.rookie.model.dto.UserLoginDTO;
-import com.rookie.model.dto.UserSelfInfoDTO;
+import com.rookie.model.dto.*;
+import com.rookie.model.entity.UserFavoriteTable;
 import com.rookie.model.entity.UserTable;
 import com.rookie.model.result.BaseResult;
 import com.rookie.model.result.None;
+import com.rookie.model.result.ResultCode;
+import com.rookie.service.FileServiceClient;
+import com.rookie.service.UserFavoriteService;
 import com.rookie.service.UserService;
 import com.rookie.utils.JWTUtils;
 import com.rookie.utils.PasswordUtil;
+import jakarta.annotation.Nullable;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.ibatis.jdbc.Null;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.rookie.model.entity.table.UserFavoriteTableTableDef.USER_FAVORITE_TABLE;
 import static com.rookie.model.entity.table.UserTableTableDef.USER_TABLE;
 
 @RestController
@@ -25,10 +35,14 @@ import static com.rookie.model.entity.table.UserTableTableDef.USER_TABLE;
 public class UserController {
     @Resource
     private UserService userService;
+    @Resource
+    private UserFavoriteService userFavoriteService;
     @Value("${jwt.secret}")
     private String secret;
     @Value("${jwt.expire}")
     private long expire;
+    @Resource
+    private FileServiceClient fileServiceClient;
 
     @PostMapping("/reg")
     public BaseResult<None> userRegister(HttpServletRequest req) {
@@ -131,4 +145,81 @@ public class UserController {
 
         return BaseResult.success(userInfo);
     }
+
+    @AuthRequired
+    @GetMapping("/follower")
+    public BaseResult<UserFavoriteUserListDTO> getFollowers(HttpServletRequest req) {
+        var userId = Auth.getToken().getId();
+        Integer offset = Integer.valueOf(req.getParameter("offset"));
+        Integer size = Integer.valueOf(req.getParameter("size"));
+        List<UserFavoriteTable> favlist = userFavoriteService
+                .list(QueryWrapper
+                        .create()
+                        .from(USER_FAVORITE_TABLE)
+                        .where(USER_FAVORITE_TABLE.UID.eq(userId))
+                        .offset(offset)
+                        .limit(size));
+        List<UserSimpleInfo> ulist = new ArrayList<>();
+        favlist.forEach(mapping -> {
+            UserTable Fav_u = userService.getOneByEntityId(UserTable.ID(mapping.getFavUid()));
+            ulist.add(UserSimpleInfo.builder()
+                    .id(String.valueOf(Fav_u.getId()))
+                    .avatar(Fav_u.getAvatar())
+                    .signature(Fav_u.getSignature())
+                    .build());
+        });
+        return BaseResult.success(UserFavoriteUserListDTO.builder().ulist(ulist).build());
+    }
+
+    @AuthRequired
+    @PostMapping("/updateinfo")
+    public BaseResult<Null> updateUserInfo(@Nullable @RequestPart("avatar") MultipartFile avatar, HttpServletRequest req) {
+        var token = req.getParameter("token");
+        Long userId = Auth.getToken().getId();
+        String fileUrl = null;
+
+
+        if (avatar != null && avatar.getOriginalFilename() != null) {
+            var fileName = avatar.getOriginalFilename();
+            if (!fileName.endsWith(".jpg") && !fileName.endsWith(".png")) {
+                return BaseResult.fail("File format error");
+            }
+            fileName = userId + "." + fileName.substring(fileName.lastIndexOf(".") + 1);
+            var res = fileServiceClient.uploadImage(avatar, fileName, FileBuckets.AVATAR_BUCKET.getBucketName(), token);
+
+            if (res.getCode() != ResultCode.SUCCESS.getCode()) {
+                return BaseResult.fail("File upload failed");
+            }
+
+            fileUrl = res.getData().getFileUrl();
+        }
+        var newUser = UserTable.builder().id(userId);
+
+
+        var name = req.getParameter("name");
+        var password = req.getParameter("password");
+        var phone = req.getParameter("phone");
+        var email = req.getParameter("email");
+        var signature = req.getParameter("signature");
+        var showCollection = req.getParameter("show_collection");
+
+        if (password != null) {
+            password = PasswordUtil.encrypt(password);
+        }
+
+        newUser.id(userId)
+                .name(name)
+                .password(password)
+                .phone(phone)
+                .email(email)
+                .signature(signature)
+                .showCollection(Boolean.parseBoolean(showCollection))
+                .avatar(fileUrl)
+                .updateTime(System.currentTimeMillis());
+
+        userService.updateById(newUser.build());
+
+        return BaseResult.success();
+    }
+
 }
