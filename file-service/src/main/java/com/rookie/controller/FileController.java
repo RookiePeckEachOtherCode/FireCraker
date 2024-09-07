@@ -39,7 +39,7 @@ public class FileController {
                 PutObjectArgs.builder()
                         .bucket(bucket.getBucketName())
                         .object(filename)
-                        .stream(inputStream, -1, 10485760)// 10MB
+                        .stream(inputStream, videoFile.getSize(), -1)
                         .build()
         );
         return BaseResult.success(FileUploadDTO.fromUrl(
@@ -48,11 +48,12 @@ public class FileController {
     }
 
     @PostMapping("/upload/image")
-   /* @AuthRequired*/
+    @AuthRequired
     public BaseResult<FileUploadDTO> uploadImage(
             @RequestPart("image") MultipartFile imageFile,
             @RequestParam("filename") String filename,
-            @RequestParam("type") String type
+            @RequestParam("type") String type,
+            @RequestParam("token") String token
     ) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         var bucket = FileBuckets.fromBucketName(type);
         if (bucket == null) {
@@ -65,12 +66,12 @@ public class FileController {
                 PutObjectArgs.builder()
                         .bucket(bucket.getBucketName())
                         .object(filename)
-                        .stream(inputStream, -1, 5242880) //5mb
+                        .stream(inputStream, imageFile.getSize(), -1)
                         .build()
         );
 
         return BaseResult.success(FileUploadDTO.fromUrl(
-                minioConfigProp.getImgHost() + "/" + FileBuckets.VIDEO_BUCKET + "/" + filename
+                minioConfigProp.getImgHost() + "/" + bucket.getBucketName() + "/" + filename
         ));
     }
 }
