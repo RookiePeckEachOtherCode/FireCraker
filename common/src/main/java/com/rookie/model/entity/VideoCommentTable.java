@@ -19,7 +19,6 @@ public class VideoCommentTable {
     private Long id;
     private Long uid;
     private Long vid;
-    private int favCnt;
     private String content;
     private Long createTime;
     private Long updateTime;

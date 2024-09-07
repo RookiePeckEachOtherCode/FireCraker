@@ -20,6 +20,7 @@ import jakarta.annotation.Nullable;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.ibatis.jdbc.Null;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -148,7 +149,7 @@ public class UserController {
 
     @AuthRequired
     @GetMapping("/follower")
-    public BaseResult<UserFavoriteUserListDTO> getFollowers(HttpServletRequest req) {
+    public BaseResult<UserListDTO> getFollowers(HttpServletRequest req) {
         var userId = Auth.getToken().getId();
         Integer offset = Integer.valueOf(req.getParameter("offset"));
         Integer size = Integer.valueOf(req.getParameter("size"));
@@ -159,6 +160,28 @@ public class UserController {
                         .where(USER_FAVORITE_TABLE.UID.eq(userId))
                         .offset(offset)
                         .limit(size));
+        return getUserListDTOBaseResult(favlist);
+    }
+    
+    @AuthRequired
+    @GetMapping("/fans")
+    public  BaseResult<UserListDTO> getFans(HttpServletRequest req){
+        var userId = Auth.getToken().getId();
+        Integer offset = Integer.valueOf(req.getParameter("offset"));
+        Integer size = Integer.valueOf(req.getParameter("size"));
+        List<UserFavoriteTable> favlist = userFavoriteService
+                .list(QueryWrapper
+                        .create()
+                        .from(USER_FAVORITE_TABLE)
+                        .where(USER_FAVORITE_TABLE.FAV_UID.eq(userId))
+                        .offset(offset)
+                        .limit(size));
+        return getUserListDTOBaseResult(favlist);
+
+    }
+
+    @NotNull
+    private BaseResult<UserListDTO> getUserListDTOBaseResult(List<UserFavoriteTable> favlist) {
         List<UserSimpleInfo> ulist = new ArrayList<>();
         favlist.forEach(mapping -> {
             UserTable Fav_u = userService.getOneByEntityId(UserTable.ID(mapping.getFavUid()));
@@ -168,7 +191,7 @@ public class UserController {
                     .signature(Fav_u.getSignature())
                     .build());
         });
-        return BaseResult.success(UserFavoriteUserListDTO.builder().ulist(ulist).build());
+        return BaseResult.success(UserListDTO.builder().data(ulist).build());
     }
 
     @AuthRequired
@@ -221,5 +244,6 @@ public class UserController {
 
         return BaseResult.success();
     }
+    
 
 }

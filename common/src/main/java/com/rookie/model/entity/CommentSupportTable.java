@@ -5,21 +5,18 @@ import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.keygen.KeyGenerators;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@Table("tb_video")
-public class VideoTable {
+@Table("tb_comment_support")
+public class CommentSupportTable {
     @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
     private Long id;
     private Long uid;
-    private String title;
-    private String description;
-    private String videoUrl;
-    private String coverUrl;
+    private Long cid;
     private Long createTime;
-    private Long updateTime;
 }
