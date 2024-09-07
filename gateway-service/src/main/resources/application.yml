@@ -18,5 +18,9 @@ spring:
           uri: lb://file-service
           predicates:
             - Path=/file/**
+        - id: socialize-service-router
+          uri: lb://socialize-service
+          predicates:
+            - Path=/social/**
 server:
   port: 8080
