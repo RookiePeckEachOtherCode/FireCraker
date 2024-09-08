@@ -5,6 +5,7 @@ import com.rookie.config.MinioConfigProp;
 import com.rookie.model.FileBuckets;
 import com.rookie.model.dto.FileUploadDTO;
 import com.rookie.model.result.BaseResult;
+import com.rookie.utils.ComposeUtils;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.errors.*;
@@ -29,19 +30,13 @@ public class FileController {
 
     @PostMapping("/upload/video")
     @AuthRequired
-    public BaseResult<FileUploadDTO> uploadVideo(@RequestParam("video") MultipartFile videoFile, HttpServletRequest req) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+    public BaseResult<FileUploadDTO> uploadVideo(@RequestParam("video") MultipartFile videoFile, HttpServletRequest req) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException, InterruptedException {
         val filename = req.getParameter("filename");
         var bucket = FileBuckets.VIDEO_BUCKET;
 
-        InputStream inputStream = videoFile.getInputStream();
+        //TODO Compress video and upload by kafka
+        ComposeUtils.compressAndUploadVideo(videoFile, filename, minioClient, bucket.getBucketName());
 
-        minioClient.putObject(
-                PutObjectArgs.builder()
-                        .bucket(bucket.getBucketName())
-                        .object(filename)
-                        .stream(inputStream, videoFile.getSize(), -1)
-                        .build()
-        );
         return BaseResult.success(FileUploadDTO.fromUrl(
                 minioConfigProp.getImgHost() + "/" + FileBuckets.VIDEO_BUCKET.getBucketName() + "/" + filename
         ));
