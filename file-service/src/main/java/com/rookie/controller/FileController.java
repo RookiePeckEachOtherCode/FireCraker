@@ -10,8 +10,6 @@ import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.errors.*;
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.val;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,8 +28,11 @@ public class FileController {
 
     @PostMapping("/upload/video")
     @AuthRequired
-    public BaseResult<FileUploadDTO> uploadVideo(@RequestParam("video") MultipartFile videoFile, HttpServletRequest req) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException, InterruptedException {
-        val filename = req.getParameter("filename");
+    public BaseResult<FileUploadDTO> uploadVideo(
+            @RequestParam("video") MultipartFile videoFile,
+            @RequestParam("filename") String filename,
+            @RequestParam("token") String token
+    ) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException, InterruptedException {
         var bucket = FileBuckets.VIDEO_BUCKET;
 
         //TODO Compress video and upload by kafka
