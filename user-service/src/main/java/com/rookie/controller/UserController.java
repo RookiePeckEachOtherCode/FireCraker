@@ -1,6 +1,7 @@
 package com.rookie.controller;
 
 import com.mybatisflex.core.query.QueryWrapper;
+import com.rookie.FileServiceClient;
 import com.rookie.annotation.AuthRequired;
 import com.rookie.aspect.Auth;
 import com.rookie.model.FileBuckets;
@@ -11,7 +12,6 @@ import com.rookie.model.entity.UserTable;
 import com.rookie.model.result.BaseResult;
 import com.rookie.model.result.None;
 import com.rookie.model.result.ResultCode;
-import com.rookie.service.FileServiceClient;
 import com.rookie.service.UserFavoriteService;
 import com.rookie.service.UserService;
 import com.rookie.utils.JWTUtils;

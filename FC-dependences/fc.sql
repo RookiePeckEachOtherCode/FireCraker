@@ -30,7 +30,8 @@ create table tb_video
     update_time bigint                not null,
     play_cnt    integer,
     fav_cnt     integer,
-    col_cnt     integer
+    col_cnt     integer,
+    tags        text default ''       not null
 );
 
 alter table tb_video
