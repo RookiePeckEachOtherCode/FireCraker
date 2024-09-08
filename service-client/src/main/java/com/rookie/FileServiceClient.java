@@ -1,4 +1,4 @@
-package com.rookie.service;
+package com.rookie;
 
 import com.rookie.config.FeignClientConfig;
 import com.rookie.model.dto.FileUploadDTO;
@@ -20,4 +20,10 @@ public interface FileServiceClient {
             @RequestParam("token") String token
     );
 
+    @PostMapping(value = "/file/upload/video", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    BaseResult<FileUploadDTO> uploadVideo(
+            @RequestPart("video") MultipartFile videoFile,
+            @RequestParam("filename") String filename,
+            @RequestParam("token") String token
+    );
 }

@@ -42,6 +42,10 @@ public class BaseResult<T> implements Serializable {
         return new BaseResult<>(resultCode.getCode(), resultCode.getMsg(), null);
     }
 
+    public Boolean ok() {
+        return code == ResultCode.SUCCESS.getCode();
+    }
+
 }
 
 
