@@ -22,5 +22,9 @@ spring:
           uri: lb://socialize-service
           predicates:
             - Path=/social/**
+        - id: video-service-router
+          uri: lb://video-service
+          predicates:
+            - Path=/video/**
 server:
   port: 8080
