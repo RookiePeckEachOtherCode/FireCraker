@@ -4,13 +4,13 @@ create table tb_user
         primary key,
     name            text                     not null,
     password        text                     not null,
-    phone           text unique              not null,
+    phone           text                     not null,
     signature       text    default ''::text not null,
     avatar          text    default ''::text not null,
     create_time     bigint                   not null,
     update_time     bigint                   not null,
-    email           text unique              not null,
-    show_collection boolean default true     not null
+    email           text,
+    show_collection boolean default true
 );
 
 alter table tb_user
@@ -27,10 +27,7 @@ create table tb_video
     video_url   text                  not null,
     cover_url   text                  not null,
     create_time bigint                not null,
-    update_time bigint                not null,
-    play_cnt    integer,
-    fav_cnt     integer,
-    col_cnt     integer,
+    update_time bigint                not null
     tags        text default ''       not null
 );
 
@@ -39,16 +36,15 @@ alter table tb_video
 
 create table tb_video_comment
 (
-    id          bigint            not null
+    id          bigint not null
         primary key,
-    uid         bigint            not null
+    uid         bigint not null
         references tb_user,
-    vid         bigint            not null
+    vid         bigint not null
         references tb_video,
-    fav_cnt     integer default 0 not null,
-    content     text              not null,
-    create_time bigint            not null,
-    update_time bigint            not null
+    content     text   not null,
+    create_time bigint not null,
+    update_time bigint not null
 );
 
 alter table tb_video_comment
@@ -108,5 +104,22 @@ create table tb_user_video_history
 );
 
 alter table tb_user_video_history
+    owner to fc_user;
+
+create table tb_comment_support
+(
+    id          bigint not null
+        constraint tb_comment_support_pk
+            primary key,
+    cid         bigint
+        constraint tb_comment_support_tb_video_comment_id_fk
+            references tb_video_comment,
+    uid         bigint
+        constraint tb_comment_support_tb_user_id_fk
+            references tb_user,
+    create_time bigint
+);
+
+alter table tb_comment_support
     owner to fc_user;
 

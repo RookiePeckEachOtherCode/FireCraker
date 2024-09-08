@@ -6,6 +6,6 @@ import java.util.List;
 
 @Builder
 @Getter
-public class UserFavoriteUserListDTO {
-    List<UserSimpleInfo> ulist;
+public class UserListDTO {
+    List<UserSimpleInfo> data;
 }

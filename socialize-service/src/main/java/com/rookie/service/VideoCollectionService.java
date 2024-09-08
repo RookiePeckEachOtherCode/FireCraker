@@ -7,25 +7,26 @@ import com.rookie.consts.RedisKey;
 import com.rookie.mapper.VideoCollectionMapper;
 import com.rookie.model.Message;
 import com.rookie.model.entity.VideoCollectionTable;
+import com.rookie.utils.RedisUtils;
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static com.rookie.model.entity.table.VideoCollectionTableTableDef.VIDEO_COLLECTION_TABLE;
 
 @Service
 public class VideoCollectionService extends ServiceImpl<VideoCollectionMapper, VideoCollectionTable> implements IVideoCollectionService {
     @Resource
-    private RedisTemplate<String, Integer> redisTemplate;
+    private RedisUtils redisUtils;
 
     @KafkaListener(topics = "video-collection", groupId = "video-collection-group")
     public void videoCollection(String message) {
         var videoCollectionMessage = JSONObject.parseObject(message, Message.class);
 
         var key = RedisKey.videoCollectionCountKey(videoCollectionMessage.getVideoId());
-
-        //TODO if key not exists, load from db and set to redis
 
         if (videoCollectionMessage.getAction()) {
             var videoCollectionTable = VideoCollectionTable.builder()
@@ -34,17 +35,24 @@ public class VideoCollectionService extends ServiceImpl<VideoCollectionMapper, V
                     .createTime(System.currentTimeMillis())
                     .build();
             save(videoCollectionTable);
-            redisTemplate.opsForValue().increment(key, 1);
+            if(redisUtils.exists(key)){
+                Integer value = redisUtils.getValue(key, Integer.class);
+                redisUtils.setValue(key,value+1,114514);
+            }else{
+                List<VideoCollectionTable> list = list(QueryWrapper.create()
+                        .where(VIDEO_COLLECTION_TABLE.VID.eq(videoCollectionMessage.getVideoId())));
+                redisUtils.setValue(key,list.size(),114514);
+            }
             return;
         }
 
         var dbData = getOne(QueryWrapper.create()
                 .where(VIDEO_COLLECTION_TABLE.UID.eq(videoCollectionMessage.getUserId()))
                 .where(VIDEO_COLLECTION_TABLE.VID.eq(videoCollectionMessage.getVideoId())));
-
         if (dbData != null) {
             removeById(dbData.getId());
-            redisTemplate.opsForValue().decrement(key, 1);
+            Integer value = redisUtils.getValue(key, Integer.class);
+            redisUtils.setValue(key,value-1,114514);
         }
     }
 }

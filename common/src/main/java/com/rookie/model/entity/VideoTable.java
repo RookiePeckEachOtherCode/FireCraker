@@ -25,4 +25,5 @@ public class VideoTable {
     private Long createTime;
     private Long updateTime;
     private String tags;
+
 }

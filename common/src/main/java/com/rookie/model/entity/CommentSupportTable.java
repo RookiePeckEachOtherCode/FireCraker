@@ -4,22 +4,18 @@ import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.keygen.KeyGenerators;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@Data
-@Table("tb_video_comment")
-public class VideoCommentTable {
+@Table("tb_comment_support")
+@Getter
+@Setter
+public class CommentSupportTable {
     @Id(keyType = KeyType.Generator, value = KeyGenerators.snowFlakeId)
     private Long id;
     private Long uid;
-    private Long vid;
-    private String content;
+    private Long cid;
     private Long createTime;
-    private Long updateTime;
 }
