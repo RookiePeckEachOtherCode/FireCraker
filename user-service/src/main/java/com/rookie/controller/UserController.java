@@ -77,7 +77,7 @@ public class UserController {
 
     @PostMapping("/login")
     public BaseResult<UserLoginDTO> userLogin(HttpServletRequest req) {
-        UserTable dbUser = null;
+        UserTable dbUser;
 
         var account = req.getParameter("account");
         var password = req.getParameter("password");
@@ -162,10 +162,10 @@ public class UserController {
                         .limit(size));
         return getUserListDTOBaseResult(favlist);
     }
-    
+
     @AuthRequired
     @GetMapping("/fans")
-    public  BaseResult<UserListDTO> getFans(HttpServletRequest req){
+    public BaseResult<UserListDTO> getFans(HttpServletRequest req) {
         var userId = Auth.getToken().getId();
         Integer offset = Integer.valueOf(req.getParameter("offset"));
         Integer size = Integer.valueOf(req.getParameter("size"));
@@ -244,6 +244,6 @@ public class UserController {
 
         return BaseResult.success();
     }
-    
+
 
 }

@@ -9,7 +9,6 @@ import com.rookie.model.Message;
 import com.rookie.model.entity.VideoCollectionTable;
 import com.rookie.utils.RedisUtils;
 import jakarta.annotation.Resource;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -35,13 +34,13 @@ public class VideoCollectionService extends ServiceImpl<VideoCollectionMapper, V
                     .createTime(System.currentTimeMillis())
                     .build();
             save(videoCollectionTable);
-            if(redisUtils.exists(key)){
+            if (redisUtils.exists(key)) {
                 Integer value = redisUtils.getValue(key, Integer.class);
-                redisUtils.setValue(key,value+1,114514);
-            }else{
+                redisUtils.setValue(key, value + 1, 114514);
+            } else {
                 List<VideoCollectionTable> list = list(QueryWrapper.create()
                         .where(VIDEO_COLLECTION_TABLE.VID.eq(videoCollectionMessage.getVideoId())));
-                redisUtils.setValue(key,list.size(),114514);
+                redisUtils.setValue(key, list.size(), 114514);
             }
             return;
         }
@@ -52,7 +51,7 @@ public class VideoCollectionService extends ServiceImpl<VideoCollectionMapper, V
         if (dbData != null) {
             removeById(dbData.getId());
             Integer value = redisUtils.getValue(key, Integer.class);
-            redisUtils.setValue(key,value-1,114514);
+            redisUtils.setValue(key, value - 1, 114514);
         }
     }
 }

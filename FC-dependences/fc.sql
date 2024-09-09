@@ -27,7 +27,7 @@ create table tb_video
     video_url   text                  not null,
     cover_url   text                  not null,
     create_time bigint                not null,
-    update_time bigint                not null
+    update_time bigint                not null,
     tags        text default ''       not null
 );
 
