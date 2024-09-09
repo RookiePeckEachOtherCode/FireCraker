@@ -63,7 +63,8 @@ public class SocializeController {
                 .action(action)
                 .build();
 
-
+        String key = RedisKey.UserColVideoKey(uid, vid);
+        redisUtils.setValue(key,1,114514);
         kafkaTemplate.send("video-collection", JSONObject.toJSONString(message));
         return BaseResult.success();
     }
@@ -78,7 +79,9 @@ public class SocializeController {
                 .videoId(vid)
                 .action(action)
                 .build();
-        
+
+        String key = RedisKey.UserFavVideoKey(uid, vid);
+        redisUtils.setValue(key,1,114514);
         kafkaTemplate.send("video-favorite", JSONObject.toJSONString(message));
         return BaseResult.success();
     }
@@ -93,12 +96,7 @@ public class SocializeController {
                 .uid(uid)
                 .vid(vid)
                 .content(content);
-        var future = kafkaTemplate.send("video-comment", JSONObject.toJSONString(message.build()));
-        future.whenComplete((result, ex) -> {
-            if (ex == null) {
-                System.out.println("Messages cmp");
-            }
-        });
+        kafkaTemplate.send("video-comment", JSONObject.toJSONString(message.build()));
         return BaseResult.success();
     }
     

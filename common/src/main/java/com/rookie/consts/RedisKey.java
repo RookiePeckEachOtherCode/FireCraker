@@ -20,4 +20,8 @@ public class RedisKey {
     public static String videoCommentSupportKey(Long cid) {
         return "comment-support-" + cid;
     }
+    
+    public static String UserFavVideoKey(Long userId,Long videoId) {return "video-fav-v:" + videoId+"u:"+userId;}
+    
+    public static String UserColVideoKey(Long userId,Long videoId) {return "video-col-v:" + videoId+"u:"+userId;}
 }
