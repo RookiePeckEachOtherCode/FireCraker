@@ -26,6 +26,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.rookie</groupId>
+            <artifactId>service-client</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.mybatis-flex</groupId>
             <artifactId>mybatis-flex-spring-boot3-starter</artifactId>
             <version>1.9.7</version>
