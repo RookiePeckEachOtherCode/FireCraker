@@ -244,6 +244,28 @@ public class UserController {
 
         return BaseResult.success();
     }
-
+    @GetMapping("/search")
+    public BaseResult<UserListDTO> search(HttpServletRequest req) {
+        Integer offset = Integer.valueOf(req.getParameter("offset"));
+        Integer size = Integer.valueOf(req.getParameter("size"));
+        String keyword = req.getParameter("keyword");
+        
+        List<UserTable> list = userService.list(QueryWrapper.create()
+                .where(USER_TABLE.NAME.like(keyword))
+                .offset(offset)
+                .limit(size));
+        
+        List<UserSimpleInfo> ulist = new ArrayList<>();
+        list.forEach(i -> {
+            UserSimpleInfo.builder()
+                    .id(String.valueOf(i.getId()))
+                    .avatar(i.getAvatar())
+                    .signature(i.getSignature())
+                    .name(i.getName())
+                    .build();
+        });
+        
+        return BaseResult.success(UserListDTO.builder().data(ulist).build());
+    }
 
 }

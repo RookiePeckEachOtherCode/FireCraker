@@ -10,6 +10,7 @@ import com.rookie.model.entity.UserVideoHistoryTable;
 import com.rookie.model.entity.VideoCollectionTable;
 import com.rookie.model.entity.VideoFavoriteTable;
 import com.rookie.model.entity.VideoTable;
+import com.rookie.model.entity.table.UserVideoCollectionTableTableDef;
 import com.rookie.utils.DataBuilder;
 import com.rookie.utils.RedisUtils;
 import jakarta.annotation.Resource;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.rookie.model.entity.table.UserVideoCollectionTableTableDef.USER_VIDEO_COLLECTION_TABLE;
 import static com.rookie.model.entity.table.UserVideoHistoryTableTableDef.USER_VIDEO_HISTORY_TABLE;
 import static com.rookie.model.entity.table.VideoCommentTableTableDef.VIDEO_COMMENT_TABLE;
 import static com.rookie.model.entity.table.VideoFavoriteTableTableDef.VIDEO_FAVORITE_TABLE;
@@ -76,7 +78,7 @@ public class ListQueryService implements IListQueryService {
     public List<VideoSimpleInfo> GetUserFavVideo(String uid, Integer offset, Integer size) {
         var videoIds = QueryChain.of(userFavoriteVideoMapper)
                 .select(VIDEO_FAVORITE_TABLE.VID)
-                .where(VIDEO_FAVORITE_TABLE.UID.eq(uid))
+                .where(VIDEO_FAVORITE_TABLE.UID.eq(Long.parseLong(uid)))
                 .offset(offset)
                 .limit(size)
                 .list()
@@ -91,8 +93,8 @@ public class ListQueryService implements IListQueryService {
     @Override
     public List<VideoSimpleInfo> GetUserColVideo(String uid, Integer offset, Integer size) {
         var videoIds = QueryChain.of(userCollectionMapper)
-                .select(VIDEO_COMMENT_TABLE.VID)
-                .where(VIDEO_COMMENT_TABLE.UID.eq(uid))
+                .select(USER_VIDEO_COLLECTION_TABLE.VID)
+                .where(USER_VIDEO_COLLECTION_TABLE.UID.eq(Long.parseLong(uid)))
                 .offset(offset)
                 .limit(size)
                 .list()
@@ -107,7 +109,7 @@ public class ListQueryService implements IListQueryService {
     public List<VideoSimpleInfo> GetUserHistory(String uid, Integer offset, Integer size) {
         var videoIds = QueryChain.of(videoHistoryMapper)
                 .select(USER_VIDEO_HISTORY_TABLE.VID)
-                .where(USER_VIDEO_HISTORY_TABLE.UID.eq(uid))
+                .where(USER_VIDEO_HISTORY_TABLE.UID.eq(Long.parseLong(uid)))
                 .offset(offset)
                 .limit(size)
                 .list()
@@ -122,7 +124,7 @@ public class ListQueryService implements IListQueryService {
     public List<VideoSimpleInfo> SearchVideo(String keyword, Integer offset, Integer size) {
         var videoIds = QueryChain.of(videoMapper)
                 .select(VIDEO_TABLE.ID)
-                .where(VIDEO_TABLE.TITLE.like("%" + keyword + "%"))
+                .where(VIDEO_TABLE.TITLE.like( keyword))
                 .offset(offset)
                 .limit(size)
                 .list()

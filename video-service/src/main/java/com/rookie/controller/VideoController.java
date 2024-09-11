@@ -13,10 +13,7 @@ import com.rookie.service.VideoMainService;
 import com.rookie.service.VideoService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -89,10 +86,9 @@ public class VideoController {
 
 
     @GetMapping("/recommend")
-    public BaseResult<VideoSimpleInfoDTO> recommend(HttpServletRequest req) {
+    public BaseResult<VideoSimpleInfoDTO> recommend(@RequestParam(value = "uid",required = false) String uid,HttpServletRequest req) {
         Integer offset = Integer.valueOf(req.getParameter("offset"));
         Integer size = Integer.valueOf(req.getParameter("size"));
-        String uid = req.getParameter("uid");
         List<VideoSimpleInfo> simpleInfos = videoMainService.GetRecommendVideo(uid, offset, size);
         return BaseResult.success(VideoSimpleInfoDTO.builder().vlist(simpleInfos).build());
     }

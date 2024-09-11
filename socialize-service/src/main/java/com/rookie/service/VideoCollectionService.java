@@ -27,21 +27,27 @@ public class VideoCollectionService extends ServiceImpl<VideoCollectionMapper, V
 
         var key = RedisKey.videoCollectionCountKey(videoCollectionMessage.getVideoId());
 
-        if (videoCollectionMessage.getAction()) {
+        if (videoCollectionMessage.getAction()&&
+                !exists(QueryWrapper.create()
+                        .where(VIDEO_COLLECTION_TABLE.VID.eq(videoCollectionMessage.getVideoId()))
+                        .and(VIDEO_COLLECTION_TABLE.UID.eq(videoCollectionMessage.getUserId()))
+                )
+        ) {
             var videoCollectionTable = VideoCollectionTable.builder()
                     .uid(videoCollectionMessage.getUserId())
                     .vid(videoCollectionMessage.getVideoId())
                     .createTime(System.currentTimeMillis())
                     .build();
-            save(videoCollectionTable);
-            if (redisUtils.exists(key)) {
-                Integer value = redisUtils.getValue(key, Integer.class);
-                redisUtils.setValue(key, value + 1, 114514);
-            } else {
-                List<VideoCollectionTable> list = list(QueryWrapper.create()
-                        .where(VIDEO_COLLECTION_TABLE.VID.eq(videoCollectionMessage.getVideoId())));
-                redisUtils.setValue(key, list.size(), 114514);
-            }
+            
+                save(videoCollectionTable);
+                if (redisUtils.exists(key)) {
+                    Integer value = redisUtils.getValue(key, Integer.class);
+                    redisUtils.setValue(key, value + 1, 114514);
+                } else {
+                    List<VideoCollectionTable> list = list(QueryWrapper.create()
+                            .where(VIDEO_COLLECTION_TABLE.VID.eq(videoCollectionMessage.getVideoId())));
+                    redisUtils.setValue(key, list.size(), 114514);
+                }
             return;
         }
 

@@ -1,6 +1,7 @@
 package com.rookie.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.rookie.consts.RedisKey;
@@ -28,7 +29,10 @@ public class VideoFavoriteService extends ServiceImpl<VideoFavoriteMapper, Video
 
 
         var key = RedisKey.videoFavoriteCountKey(videoFavoriteMessage.getVideoId());
-        if (videoFavoriteMessage.getAction()) {
+        if (videoFavoriteMessage.getAction()&&
+                !exists(QueryWrapper.create()
+                        .where(VIDEO_FAVORITE_TABLE.VID.eq(videoFavoriteMessage.getVideoId()))
+                        .and(VIDEO_FAVORITE_TABLE.UID.eq(videoFavoriteMessage.getUserId())))) {
             var videoFavoriteTable = VideoFavoriteTable.builder()
                     .uid(videoFavoriteMessage.getUserId())
                     .vid(videoFavoriteMessage.getVideoId())
