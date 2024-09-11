@@ -1,6 +1,7 @@
 package com.rookie.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.rookie.consts.RedisKey;
@@ -9,7 +10,6 @@ import com.rookie.model.Message;
 import com.rookie.model.entity.VideoFavoriteTable;
 import com.rookie.utils.RedisUtils;
 import jakarta.annotation.Resource;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -29,19 +29,22 @@ public class VideoFavoriteService extends ServiceImpl<VideoFavoriteMapper, Video
 
 
         var key = RedisKey.videoFavoriteCountKey(videoFavoriteMessage.getVideoId());
-        if (videoFavoriteMessage.getAction()) {
+        if (videoFavoriteMessage.getAction()&&
+                !exists(QueryWrapper.create()
+                        .where(VIDEO_FAVORITE_TABLE.VID.eq(videoFavoriteMessage.getVideoId()))
+                        .and(VIDEO_FAVORITE_TABLE.UID.eq(videoFavoriteMessage.getUserId())))) {
             var videoFavoriteTable = VideoFavoriteTable.builder()
                     .uid(videoFavoriteMessage.getUserId())
                     .vid(videoFavoriteMessage.getVideoId())
                     .createTime(System.currentTimeMillis())
                     .build();
             save(videoFavoriteTable);
-            if(redisUtils.exists(key)){
+            if (redisUtils.exists(key)) {
                 Integer value = redisUtils.getValue(key, Integer.class);
-                redisUtils.setValue(key,value+1,114514);
-            }else{
+                redisUtils.setValue(key, value + 1, 114514);
+            } else {
                 List<VideoFavoriteTable> list = list(QueryWrapper.create().where(VIDEO_FAVORITE_TABLE.VID.eq(videoFavoriteMessage.getVideoId())));
-                redisUtils.setValue(key,list.size()+1,114514);
+                redisUtils.setValue(key, list.size() + 1, 114514);
             }
             return;
         }
@@ -53,7 +56,7 @@ public class VideoFavoriteService extends ServiceImpl<VideoFavoriteMapper, Video
         if (dbData != null) {
             removeById(dbData.getId());
             Integer value = redisUtils.getValue(key, Integer.class);
-            redisUtils.setValue(key,value-1,114514);
+            redisUtils.setValue(key, value - 1, 114514);
         }
     }
 

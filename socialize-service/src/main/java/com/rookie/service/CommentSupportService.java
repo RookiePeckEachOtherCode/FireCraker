@@ -35,17 +35,25 @@ public class CommentSupportService extends ServiceImpl<CommentSupportMapper, Com
                 .createTime(System.currentTimeMillis());
         save(table.build());
         String key = RedisKey.videoCommentSupportKey(cid);
+        String isFavKey = RedisKey.videoCommentIsSupportKey(uid, cid);
         if (action) {
             if (redisUtils.exists(key)) {
                 Integer value = redisUtils.getValue(key, Integer.class);
-                redisUtils.setValue(key,value+1,114514);
+                redisUtils.setValue(key, value + 1);
             } else {
                 try {
                     List<CommentSupportTable> list = list(QueryWrapper.create().where(COMMENT_SUPPORT_TABLE.CID.eq(cid)));
-                    redisUtils.setValue(key,list.size(),72);
-                }catch (MyBatisSystemException ignored){
-                    redisUtils.setValue(key,1,72);
+                    redisUtils.setValue(key, list.size());
+                } catch (MyBatisSystemException ignored) {
+                    redisUtils.setValue(key, 1);
                 }
+            }
+
+            if (redisUtils.exists(isFavKey)) {
+                redisUtils.setValue(isFavKey, 1);
+            } else {
+                var isFav = getOne(QueryWrapper.create().where(COMMENT_SUPPORT_TABLE.CID.eq(cid)).where(COMMENT_SUPPORT_TABLE.UID.eq(uid))) != null;
+                redisUtils.setValue(isFavKey, isFav ? 1 : 0);
             }
         } else {
             remove(QueryWrapper.create()
@@ -53,7 +61,11 @@ public class CommentSupportService extends ServiceImpl<CommentSupportMapper, Com
                             .and(COMMENT_SUPPORT_TABLE.CID.eq(cid))));
             if (redisUtils.exists(key)) {
                 Integer value = redisUtils.getValue(key, Integer.class);
-                redisUtils.setValue(key,value-1,114514);
+                redisUtils.setValue(key, value - 1);
+            }
+
+            if (redisUtils.exists(isFavKey)) {
+                redisUtils.setValue(isFavKey, 0);
             }
         }
     }

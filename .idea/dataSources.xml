@@ -13,9 +13,10 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="fc@localhost" uuid="c35567cd-2cf6-42e9-9a70-6a9c80b0c8cd">
+    <data-source source="LOCAL" name="fc@localhost" uuid="479fa6ff-a1c1-4cac-ac17-8b772a46e8eb">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
+      <imported>true</imported>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://localhost:5432/fc</jdbc-url>
       <jdbc-additional-properties>
