@@ -113,18 +113,7 @@ public class UserController {
         if (dbUser == null) {
             return BaseResult.fail("User does not exist");
         }
-
-        var userSelfInfo = UserSelfInfoDTO.builder()
-                .id(dbUser.getId())
-                .name(dbUser.getName())
-                .avatar(dbUser.getAvatar())
-                .signature(dbUser.getSignature())
-                .favCnt(114514) //TODO get fav count
-                .colCnt(114514) //TODO get col count
-                .updCnt(114514) //TODO get upd count
-                .showCollection(dbUser.isShowCollection())
-                .build();
-        return BaseResult.success(userSelfInfo);
+        return BaseResult.success(userService.UserFullInfo(userId));
     }
 
     @GetMapping("/info/{id}")

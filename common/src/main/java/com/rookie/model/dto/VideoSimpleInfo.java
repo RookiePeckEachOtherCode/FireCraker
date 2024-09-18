@@ -18,4 +18,5 @@ public class VideoSimpleInfo {
     String cover_url;
     String title;
     String video_url;
+    String author_name;
 }

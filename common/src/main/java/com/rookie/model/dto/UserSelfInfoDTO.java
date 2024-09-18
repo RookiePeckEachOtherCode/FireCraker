@@ -10,8 +10,10 @@ public class UserSelfInfoDTO {
     private String name;
     private String avatar;
     private String signature;
-    private int favCnt;
-    private int colCnt;
-    private int updCnt;
+    private Long favCnt;
+    private Long falCnt;
+    private Long fedCnt;
+    private Long colCnt;
+    private Long updCnt;
     private boolean showCollection;
 }

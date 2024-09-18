@@ -10,8 +10,10 @@ import com.rookie.mapper.VideoMapper;
 import com.rookie.model.HistoryMessage;
 import com.rookie.model.dto.VideoFullInfo;
 import com.rookie.model.dto.VideoSimpleInfo;
+import com.rookie.model.entity.UserTable;
 import com.rookie.model.entity.UserVideoHistoryTable;
 import com.rookie.model.entity.VideoTable;
+import com.rookie.model.entity.table.UserTableTableDef;
 import com.rookie.model.entity.table.UserVideoHistoryTableTableDef;
 import com.rookie.utils.DataBuilder;
 import com.rookie.utils.RedisUtils;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.rookie.model.entity.table.UserTableTableDef.USER_TABLE;
 import static com.rookie.model.entity.table.UserVideoHistoryTableTableDef.USER_VIDEO_HISTORY_TABLE;
 import static com.rookie.model.entity.table.VideoTableTableDef.VIDEO_TABLE;
 
@@ -155,6 +158,7 @@ public class VideoMainService implements IVideoMainService {
             var facCnt = redisUtils.getValue(RedisKey.videoFavoriteCountKey(it.getId()), Integer.class);
             var comCnt = redisUtils.getValue(RedisKey.videoCommentCountKey(it.getId()), Integer.class);
             var playCnt = redisUtils.getValue(RedisKey.videoPlayCountKey(it.getId()), Integer.class);
+            UserTable p_user = QueryChain.of(userMapper).where(USER_TABLE.ID.eq(it.getUid())).one();
 
             return VideoSimpleInfo.builder()
                     .id(it.getId())
@@ -163,6 +167,7 @@ public class VideoMainService implements IVideoMainService {
                     .fav_cnt(DataBuilder.buildCount(facCnt))
                     .com_cnt(DataBuilder.buildCount(comCnt))
                     .play_cnt(DataBuilder.buildCount(playCnt))
+                    .author_name(p_user.getName())
                     .build();
         }).toList();
     }

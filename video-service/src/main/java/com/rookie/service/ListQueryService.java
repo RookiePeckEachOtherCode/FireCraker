@@ -6,10 +6,7 @@ import com.rookie.consts.RedisKey;
 import com.rookie.mapper.*;
 import com.rookie.model.dto.CommentInfo;
 import com.rookie.model.dto.VideoSimpleInfo;
-import com.rookie.model.entity.UserVideoHistoryTable;
-import com.rookie.model.entity.VideoCollectionTable;
-import com.rookie.model.entity.VideoFavoriteTable;
-import com.rookie.model.entity.VideoTable;
+import com.rookie.model.entity.*;
 import com.rookie.model.entity.table.UserVideoCollectionTableTableDef;
 import com.rookie.utils.DataBuilder;
 import com.rookie.utils.RedisUtils;
@@ -19,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.rookie.model.entity.table.UserTableTableDef.USER_TABLE;
 import static com.rookie.model.entity.table.UserVideoCollectionTableTableDef.USER_VIDEO_COLLECTION_TABLE;
 import static com.rookie.model.entity.table.UserVideoHistoryTableTableDef.USER_VIDEO_HISTORY_TABLE;
 import static com.rookie.model.entity.table.VideoCommentTableTableDef.VIDEO_COMMENT_TABLE;
@@ -41,6 +39,8 @@ public class ListQueryService implements IListQueryService {
     private RedisUtils redisUtils;
     @Resource
     private UserServiceClient userServiceClient;
+    @Resource
+    private UserMapper userMapper;
 
 
     @Override
@@ -162,7 +162,7 @@ public class ListQueryService implements IListQueryService {
             var facCnt = redisUtils.getValue(RedisKey.videoFavoriteCountKey(it.getId()), Integer.class);
             var comCnt = redisUtils.getValue(RedisKey.videoCommentCountKey(it.getId()), Integer.class);
             var playCnt = redisUtils.getValue(RedisKey.videoPlayCountKey(it.getId()), Integer.class);
-
+            UserTable p_user = QueryChain.of(userMapper).where(USER_TABLE.ID.eq(it.getUid())).one();
             return VideoSimpleInfo.builder()
                     .id(it.getId())
                     .title(it.getTitle())
@@ -170,6 +170,7 @@ public class ListQueryService implements IListQueryService {
                     .fav_cnt(DataBuilder.buildCount(facCnt))
                     .com_cnt(DataBuilder.buildCount(comCnt))
                     .play_cnt(DataBuilder.buildCount(playCnt))
+                    .author_name(p_user.getName())
                     .build();
         }).toList();
     }
